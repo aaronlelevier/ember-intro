@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+    </head>
+    <body>
+        <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+        <script src="/vendor/handlebars.js"></script>
+        <script src="/vendor/ember.js"></script>
+
+        <script type="text/x-handlebars" data-template-name="aaron">
+            {{#each aaron in controller}}
+                <h1>{{aaron.name_two}}</h1>
+            {{/each}}
+            <h2>{{hats}}</h2>
+        </script>
+
+        <script type="text/x-handlebars" data-template-name="bob">
+            <h1>{{controller}}</h1>
+            {{#each thing in controller}}
+                <h2>{{thing.id}}</h2>
+            {{/each}}
+        </script>
+
+        <script type="text/x-handlebars" data-template-name="toran">
+            <h1>{{model.name}}</h1>
+        </script>
+
+        <script>
+        var App = Ember.Application.create();
+        App.Router.map(function() {
+            this.route('aaron', {path: '/'});
+            this.route('bob', {path: '/bob'});
+            this.route('toran', {path: '/toran'});
+        });
+        App.AaronModel = Ember.Object.extend({
+            name: 'foo',
+            name_two: function(){
+                return this.get('name') + '2';
+            }.property('name')
+        });
+        App.AaronRoute = Ember.Route.extend({
+            model: function() {
+                var two = App.AaronModel.create({id: 2});
+                var _ = two.get('name_two');
+                two.set('name', 'abc');
+                return {
+                    model: [
+                        App.AaronModel.create({id: 1, name: 'Toran'}),
+                        two,
+                    ],
+                    hats: 'wat?'
+                };
+            },
+            setupController: function(controller, hash) {
+                controller.set('model', hash.model);
+                controller.set('hats', hash.hats);
+            }
+        });
+        App.AaronController = Ember.ArrayController.extend({
+            name: 'Toran',
+            hats: [1,2,3]
+        });
+        App.BobRoute = Ember.Route.extend({
+            model: function() {
+                return [{id: 8}];
+            }
+        });
+        App.ToranRoute = Ember.Route.extend({
+            model: function() {
+                return {name: 'foo'};
+            }
+        });
+        App.ToranController = Ember.Controller.extend({
+
+        });
+        </script>
+    </body>
+</html>
